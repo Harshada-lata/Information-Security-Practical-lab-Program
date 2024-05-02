@@ -1,0 +1,151 @@
+hellman.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hellman Key Exchange</title>
+</head>
+<body>
+    <h2>Alice's Information</h2>
+    <label for="p">Enter prime number p: </label>
+    <input type="number" id="p" /><br><br>
+    <button onclick="checkPrime()">Check Prime</button><br><br>
+    <span id="primeStatus"></span><br><br>
+    
+    <label for="g">Enter primitive root g: </label>
+    <input type="number" id="g" /><br><br>
+    <button onclick="checkGenerator()">Check Generator</button><br><br>
+    <span id="generatorStatus"></span><br><br>
+    
+    
+    <label for="x">Enter Alice's private key x: </label>
+    <input type="number" id="x" /><br><br>
+    
+    <button onclick="calculateA()">Calculate A</button><br><br>
+    <label for="receivedA"> calculated A: </label>
+    <input type="number" id="receivedA" readonly /><br><br>
+
+    <button onclick="calculateSecretKeySkA()">Secret key</button><br><br>
+    <label for="secretKeyA">Shared secret key: </label>
+    <input type="number" id="secretKeyA" readonly /><br><br>
+
+    <h2>Bob's Information</h2>
+    <label for="y">Enter Bob's private key y: </label>
+    <input type="number" id="y" /><br><br>
+    
+    <button onclick="calculateB()">Calculate B</button><br><br>
+    <label for="calculatedB">Calculated B: </label>
+    <input type="number" id="calculatedB" readonly /><br><br>
+    
+    <button onclick="calculateSecretKeySkB()">Secret key</button><br><br>
+    <label for="secretKeyB">Shared secret key: </label>
+    <input type="numbert" id="secretKeyB" readonly /><br><br>
+    
+    <script src="hellman.js"></script>
+</body>
+</html>
+
+
+hellman.js
+let p, g, x, y, A, B, secretKey;
+
+//prime no
+function isPrime(num) 
+{
+    if (num <= 1) 
+    {
+        return false;
+    } 
+    
+    for (let i = 2; i <= Math.sqrt(num); i ++) 
+    {
+        if (num % i === 0) 
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function checkPrime() 
+{
+    let p = parseInt(document.getElementById("p").value);
+    
+    if (isPrime(p)) 
+    {
+        document.getElementById("primeStatus").textContent = "p is a prime number.";
+    } else 
+    {
+        document.getElementById("primeStatus").textContent = "p is not a prime number.";
+    }
+}
+
+//primitive root
+
+function isPrimitiveRoot(g, p) 
+{
+    let seen = new Set();
+    for (let i = 1; i < p; i++) 
+    {
+        let val = (g ** i) % p;
+        if (seen.has(val)) 
+        {
+            return false;
+        }
+        seen.add(val);
+    }
+    return seen.size === p - 1;
+}
+
+function checkGenerator() 
+{
+    let g = parseInt(document.getElementById("g").value);
+    let p = parseInt(document.getElementById("p").value);
+    
+    if (isPrimitiveRoot(g, p)) 
+    {
+        document.getElementById("generatorStatus").textContent = "g is a primitive root of p.";
+    } else 
+    {
+        document.getElementById("generatorStatus").textContent = "g is not a primitive root of p.";
+    }
+}
+
+
+
+function calculateA() 
+{
+    p = parseInt(document.getElementById("p").value);
+    g = parseInt(document.getElementById("g").value);
+    x = parseInt(document.getElementById("x").value);
+    
+    A = (g ** x) % p;
+    
+    document.getElementById("receivedA").value = A;
+}
+
+function calculateB() 
+{
+    y = parseInt(document.getElementById("y").value);
+    
+    B = (g ** y) % p;
+    
+    document.getElementById("calculatedB").value = B;
+    
+    calculateSecretKey();
+}
+
+function calculateSecretKeySkA() 
+{
+    secretKey = (B ** x) % p;
+    
+    document.getElementById("secretKeyA").value = secretKey;
+}
+
+
+function calculateSecretKeySkB() 
+{
+    secretKey = (A ** y) % p;
+    
+    document.getElementById("secretKeyB").value = secretKey;
+}
