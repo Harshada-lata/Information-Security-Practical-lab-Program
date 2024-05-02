@@ -1,0 +1,117 @@
+#include <iostream>
+#include <cmath>
+int flag;
+int p ;
+int q ;
+using namespace std;
+
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+bool isPrime(int n) {
+    if (n <= 1) {
+        return false;
+    }
+    for (int i = 2; i <= sqrt(n); i++) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+int encrypt(int msg, int e, int n) {
+    return fmod(pow(msg,e),n);
+}
+
+int decrypt(int encrypt, int d, int n) {
+    return fmod(pow(encrypt, d), n);
+}
+int public_key(int e,int n){
+	return(e,n);
+}
+int private_key(int d,int n){
+	return(d,n);
+}
+
+int main() {
+	int e;
+    int p ;
+    int q ;
+    cout<<"Enter p :";
+    cin>>p;
+    
+    flag=isPrime(p);
+    if(flag==0){
+		cout<<"this is not prime number";
+		exit(1);
+	}
+	cout<<"Enter q :";
+    cin>>q;
+    
+	flag=isPrime(q);
+    if(flag==0){
+		cout<<"this is not prime number";
+		exit(1);
+	}
+	
+    isPrime(p)?cout<<p<<" is prime\n":cout<<p<<" is not prime\n";
+    isPrime(q)?cout<<q<<" is prime\n":cout<<q<<" is not prime\n";
+    
+    int m ;
+    cout<<"Enter m:";
+    cin>>m;
+    
+    int n = p * q;
+    cout<<"Value of n :"<<n<<endl;
+    
+    int phi = (p - 1) * (q - 1);
+    cout<<"value of phi(n) :"<<phi<<endl;
+    
+    // Choose e such that it lies between 1<e<phi & gcd(e,phi)=1
+  for(int i=2; i<e<phi; i++)
+  {
+    if(gcd(i,phi)==1)
+    {
+      e = i;
+      
+      break;
+	}
+
+}
+    
+    cout<<"Value of e:"<<e<<endl;
+    
+    int pub_key=public_key(e,n);
+    cout<<"public key <e,n>: (" <<e<<" , " <<n<< ") "<<endl; 
+    while (gcd(e, phi) != 1) {
+        e++;
+    }
+
+    int d = 1;
+    while (fmod(e * d, phi) != 1) {
+        d++;
+    }
+    cout<<"Value of d :"<<d<<endl;
+    int pri_key=public_key(d,n);
+    cout<<"private key <d,n>: (" <<d<<" , " <<n<< ") "<<endl;
+  
+
+    
+    cout << "Original Message: " << m << endl;
+
+    int cipher = encrypt(m, e, n);
+    cout << "Encrypted Message(ciphertext): " << cipher << endl;
+
+    int plain = decrypt(cipher, d, n);
+    cout << "Decrypted Message(plaintext): " << plain << endl;
+    
+    
+    
+    return 0;
+}
